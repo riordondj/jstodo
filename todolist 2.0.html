@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TodoList-最简单的待办事项列表</title>
+	<style type="text/css">
+	body{
+		margin:0;
+		padding:0;
+		font-size:16px;
+		background-color: gainsboro;
+	}
+	header{
+		height:50px;
+		background-color: rgb(50,50,50);
+	}
+	header section{
+		margin:0 auto;
+		width: 40%;
+	}
+	header section label{
+		float:left;
+		line-height: 50px;
+		font-size:20px;
+		color:white;
+	}
+	#txt{
+		float: right;
+		line-height: 24px;
+		margin-top: 10px;
+		width:60%;
+		height:24px;
+		box-shadow: 0 1px 0 black;
+		border-radius: 5px;
+		text-indent: 5px;
+	}
+	h1{
+		position: relative;
+
+	}
+	.content{
+		width: 40%;
+		margin:0 auto;
+	}
+	h1 span{
+		position: absolute;
+		display: inline-block;
+		background-color: rgb(230,230,250);
+		border-radius: 23px;
+		right:0px;
+		top:5px;
+		width: 20px;
+		
+		line-height: 23px;
+		font-size: 14px;
+		text-align: center;
+
+	}
+	.tt{
+		font-size: 24px;
+	}
+	ol li{
+		position: relative;
+	    margin-bottom: 10px;
+	    border-radius: 3px;
+	    padding: 0 10px;
+	    right:40px;
+	    width: 597px;
+	    height: 32px;
+	    top:10px;
+	    /*box-shadow: 0 1px 0 black;*/
+	    line-height: 32px;
+	    background-color: white;
+	    list-style: none;
+	    border-left-width: 5px;
+	    border-left-color: green;
+	    border-left-style: solid;
+
+	}
+	ol li a{
+		position: absolute;
+	    top: 4px;
+	    /*right: 10px;*/
+	    left: 190px;
+	    display: inline-block;
+	    border: 1px;
+	    border-radius: 50%;
+	    width: 16px;
+	    height: 16px;
+	    font-size: 18px;
+	    line-height: 12px;
+	    color: rgb(253,253,253);
+	    font-weight: bolder;
+	    cursor: pointer;
+	    background-color: rgb(204,204,204);
+	    text-align: center;
+	    border:4px solid rgb(224,224,224);
+
+	}
+	/*时钟*/
+	ol li span{
+		position: absolute;
+		bottom: 2px;
+		right:190px;
+		display: inline-block;
+		height:30px;
+		font-size: 24px;
+	}
+	ol li span input{
+		position: absolute;
+		width: 120px;
+		bottom:0.2px;
+	}
+	ol li input{
+		width:23px;
+		height:23px;
+		line-height: 23px;
+		margin-top: 5px;
+		cursor: pointer;
+	}
+	ol li p{
+		position: absolute;
+		top: 0.8px;
+		display: inline-block;
+		height:32px;
+		line-height: 32px;
+		margin-top: 0px;
+	}
+	ol li p input{
+	    position: absolute;
+		top: 0.8px;
+		display: inline-block;
+		width: 300px;
+		height:20px;
+		line-height: 20px;
+		margin-top: 2px;
+
+	}
+	#d2{
+		border-bottom-width: 2px;
+		border-bottom-color: rgb(204,204,204);
+		border-bottom-style: solid;
+		width: 100%;
+	}
+	#s2{
+		margin:0 auto;
+		width: 40%;
+	}
+	#sousuo{
+		font-family: "Microsoft Yahei";
+		font-size:22px;
+	}
+	#search{
+		float:right;
+		height:18px;
+		line-height: 18px;
+		border-radius: 5px;
+		width:200px;
+		margin-right: 170px;
+		margin-top: 2px;
+	}
+	.grey{
+		background-color: rgb(230,230,230);
+		border-left-color: grey;
+		border-left-width: 5px;
+	    border-left-color: rgb(179,179,179);
+	    border-left-style: solid;
+	}
+	#s3{
+		margin:0 auto;
+		width: 100px;
+	}
+	#last{
+		font-size: 18px;
+		color:rgb(153,153,153);
+		cursor: pointer;
+	}
+	#last:hover{
+		text-decoration: underline;
+	}
+	</style>
+</head>
+<body>
+	<header>
+		<section>
+			<label for="txt">ToDoList</label>
+			<input type="text" name="txt" id="txt">
+		</section>
+	</header>
+	<div id="d2">
+		<section id="s2">
+			<span id="sousuo">Search<input type="text" value="" id="search"></span>
+		</section>
+	</div>
+	<div class="content">
+		<h1 class="tt">正在进行<span id="doingcount">0</span></h1>
+		<ol id="doinglist">
+		</ol>
+		<h1 class="tt">已经完成<span id="donecount">0</span></h1>	
+		<ol id="donelist">
+		</ol>		
+	</div>
+	<section id="s3">
+		<span id="last" >clear</span>
+	</section>
+
+	<script type="text/javascript">
+		doinglist=[];
+		function addlist(){
+			var input =document.getElementById("txt");
+			input.value=input.value.trim();
+			if(input.value.length==0){
+				alert("请输入内容");
+				return ;
+			}
+			var objlist={
+				thing:"",
+				done:false,
+				date:""
+			}
+			objlist.thing=input.value;
+			doinglist.push(objlist);
+			saveData(doinglist);
+			input.value="";
+			load();
+
+		}
+
+		function load(){
+			var doing =document.getElementById("doinglist");
+			var done=document.getElementById("donelist");
+			var doingcount=document.getElementById("doingcount");
+			var donecount=document.getElementById("donecount");
+			var doingString="";
+			var doneString="";
+			var doingCount=0;
+			var doneCount=0;
+			doinglist = loadData();
+			if(doinglist!=null){
+				for(var i=0;i<doinglist.length;i++){
+					if(!doinglist[i].done){
+						doingString+="<li id='list-"+i+"'>"
+					 + "<input class='s' type='checkbox' onchange='update("+i+", \"done\", true)'>"
+                    + "<p id='p-"+i+"' onclick='edit("+i+")'>" + doinglist[i].thing + "</p>" +
+                    "<span>🕒<input type='date' id='date-"+i+"' onclick='deadline("+i+")' value='"+doinglist[i].date+"'</span>"+
+                    //<input type='date' id='data-"+i+"' value=''
+                    "<a onclick='remove("+i+")'>x</a>" +
+                    "</li>";
+                    doingCount++;
+                    }
+                    else{
+               		 doneString += "<li id='list-"+i+"'>"
+                    + "<input type='checkbox' class='s'"
+                    + "onchange='update("+i+", \"done\", false)' checked>"
+                    + "<p id='p-"+i+"' onclick='edit("+i+")'>" + doinglist[i].thing + "</p>"
+                    +"<span>🕒<input type='date' id='date-"+i+"' onclick='deadline("+i+")' value='"+doinglist[i].date+"'</span>" 
+
+                    + "<a onclick='remove("+i+")'>x</a>"
+                    + "</li>";
+               		doneCount ++;
+           			}
+           			//test(i);
+				}
+				doing.innerHTML=doingString;
+				done.innerHTML=doneString;
+				doingcount.innerHTML=doingCount;
+				donecount.innerHTML=doneCount;
+
+			}else{
+				doingString="";
+				doneString="";
+				doingCount=0;
+				doneCount=0;
+			}
+
+		}
+		function edit(i){
+			var p=document.getElementById('p-'+i);
+			var pContent=p.innerHTML;
+			var inputId;
+			function Confirm(){
+				if(inputId.value.length===0){
+				p.innerHTML=pContent;
+				alert("内容不能为空");
+				}
+				else{
+				update(i,"thing",inputId.value);
+				}
+			}
+			
+			function enter(e){
+				if(e.keyCode===13)
+					Confirm();
+			}
+			p.innerHTML="<input type='text' id='input-"+i+"' value='"+pContent+"'>";
+			inputId=document.getElementById("input-"+i);
+			inputId.focus();
+			inputId.onblur=Confirm;
+			inputId.setSelectionRange(0,inputId.value.length);
+			inputId.onkeypress=enter;
+		}
+		function update(i,item,value){
+			doinglist[i][item]=value;
+			saveData(doinglist);
+			load();
+			test(i);
+		}
+		function remove(i){
+			doinglist.splice(i,1);
+			saveData(doinglist);
+			load();
+		}
+		function search(){
+			var find=document.getElementById("search");
+			for(var i=0;i<doinglist.length;i++){
+				if(doinglist[i].thing.indexOf(find.value)!==-1){
+					window.location.hash="#p-"+i;
+					document.getElementById("list-"+i).getElementsByTagName("input")[0].focus();
+				}
+			}
+		}
+		function deadline(i){
+			var d=document.getElementById('date-'+i);
+			function change(){
+				// doinglist[i].date=d.value;
+				// test(i);
+				update(i,"date",d.value);
+			}
+			d.focus();
+			d.onblur=change;
+		}
+		function test(i){
+		    var d=document.getElementById("date-"+i);
+		    var ds=d.value;
+		    if(ds!==""){
+			    var y=ds.substring(0,4);
+				var m=ds.substring(5,7);
+				var d=ds.substring(8);
+				//alert(ds);
+				var today=new Date();
+				var ty=today.getFullYear(),
+			  		tm=today.getMonth()+1,
+			    	td=today.getDate();
+			    	//alert(ty+" "+tm+" "+td);
+			    var grey=document.getElementById("list-"+i);
+		    	if ((ty>y)||(ty==y&&tm>m)||(ty==y&&tm==m&&td>d)) {	
+					grey.className="grey";
+				}
+				else
+					grey.className="";
+			}
+		}
+		function saveData(data) {
+		    localStorage.setItem("mytodolist", JSON.stringify(data));   //JS对象转换成JSON对象存进本地缓存
+		}
+		function loadData() {
+		    var hisTory = localStorage.getItem("mytodolist");
+		    if(hisTory !=null){
+		        return JSON.parse(hisTory);     //JSON对象转换为JS对象
+		    }
+		    else { return []; }
+		}
+		function Clear() {
+		    localStorage.clear();
+		    load();
+		}
+
+		window.addEventListener("load",load);
+		document.getElementById("txt").onkeypress=function(event){
+			if(event.keyCode===13)
+				addlist();
+		};
+		document.getElementById("search").onkeypress=function(event){
+			if(event.keyCode===13)
+				search();
+		}
+		var clear=document.getElementById("last");
+		clear.addEventListener('click',Clear);
+
+		
+		
+	
+
+	</script>
+</body>
+</html>
